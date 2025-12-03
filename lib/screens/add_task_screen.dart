@@ -4,7 +4,9 @@ import '../bloc/task_bloc.dart';
 import '../bloc/task_event.dart';
 
 class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({Key? key}) : super(key: key);
+  final TaskBloc taskBloc; // додали
+
+  const AddTaskScreen({Key? key, required this.taskBloc}) : super(key: key);
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
@@ -22,7 +24,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text("Add Task")),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
@@ -30,14 +32,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(labelText: "Title"),
-                validator: (value) => value!.isEmpty ? "Enter a title" : null,
+                validator: (value) => value!.isEmpty ? "Enter title" : null,
               ),
-              const SizedBox(height: 16),
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(labelText: "Description"),
               ),
-              const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _priority,
                 items: ["Low", "Medium", "High"]
@@ -46,7 +46,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 onChanged: (value) => setState(() => _priority = value!),
                 decoration: const InputDecoration(labelText: "Priority"),
               ),
-              const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
@@ -60,7 +59,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     onPressed: () async {
                       final date = await showDatePicker(
                         context: context,
-                        initialDate: DateTime.now(),
+                        initialDate: _dueDate ?? DateTime.now(),
                         firstDate: DateTime.now(),
                         lastDate: DateTime(2100),
                       );
@@ -74,7 +73,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    context.read<TaskBloc>().add(AddTaskEvent(
+                    widget.taskBloc.add(AddTaskEvent(
                       title: _titleController.text,
                       description: _descriptionController.text,
                       priority: _priority,
@@ -84,7 +83,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   }
                 },
                 child: const Text("Add Task"),
-              ),
+              )
             ],
           ),
         ),

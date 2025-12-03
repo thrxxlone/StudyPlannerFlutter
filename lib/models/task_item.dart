@@ -5,7 +5,7 @@ class TaskItem {
   final String title;
   final String description;
   final String priority;
-  final Timestamp? dueDate; // зберігається як Timestamp у Firestore
+  final Timestamp? dueDate;
 
   TaskItem({
     required this.id,
